@@ -3,6 +3,9 @@
 
 //#include <Adafruit_SSD1306.h>
 #include <Battery.cpp>
+#include <Vape.cpp>
+
+
 #include <ClickButton.h>
 
 //BLE LIBRARIES
@@ -20,38 +23,16 @@
 #define POTMETER 12
 #define BATTERY_LOW 7.1
 
-float coilResistance = 0.4;
 
-int minPower;
-int maxPower;
-int setPower;
-int setPowerMode = 0; //mode: 0 for reading Potmeter, 1 for setting power by BLE App
-
-int minPotVal;
-int maxPotVal = 4096;
 
 bool deviceConnected = false;
 
-// the LED
-const int ledPin = 10;
-int ledState = 0;
-int analogVoltage;
-int batteryVoltage;
-
-unsigned long puffTime = 0;
-unsigned long puffStart = 0;
-
-bool vape_hold =false;
+bool vape_hold  = false;
 bool vape_state = false;
 // the Button
 const int buttonPin1 = 4;
 ClickButton fireButton(FIREBUTTON, LOW, CLICKBTN_PULLUP);
-
-//init the real time clock
-// Arbitrary LED function
-int LEDfunction = 0;
 int lastButtonState;
-
 class MyServerCallbacks: public BLEServerCallbacks {
     void onConnect(BLEServer* pServer) {
       deviceConnected = true;
@@ -63,6 +44,9 @@ class MyServerCallbacks: public BLEServerCallbacks {
     }
 };
 
+Battery battery;
+Vape vape;
+
 void setup()
 {
   Serial.begin(9600);
@@ -72,6 +56,7 @@ void setup()
   fireButton.debounceTime   = 20;   // Debounce timer in ms
   fireButton.multiclickTime = 150;  // Time limit for multi clicks
   fireButton.longClickTime  = 160; // time until "held-down clicks" register
+
   //Init BLE Device's name
   BLEDevice::init("Viril");
 
@@ -79,6 +64,9 @@ void setup()
   BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
   pServer->getAdvertising()->start();
+
+
+  vape.setup(MOSFET);
 }
 
 
@@ -91,23 +79,8 @@ void loop()
   if(fireButton.clicks == 5) true;//lock();
 
   // slow blink (must hold down button. 1 second long blinks)
-  if(fireButton.clicks == -1) true;//startVaping();
+  if(fireButton.clicks == -1) {vape_state = true; vape.start();}
 
   //if(fireButton.clicks == 0 && !digitalRead(FIREBUTTON)) longPressCallback();
-  if(digitalRead(FIREBUTTON) && vape_state) true;//stopVaping();
-}
-void startVaping()
-{
-    puffStart = millis();
-    vape_state = true;
-    Serial.println("Started vaping");
-
-}
-void stopVaping()
-{
-  Serial.println("Stopped vaping");
-  vape_state = false;
-  puffTime = millis() - puffStart;
-  Serial.println("Vaped for " + String(puffTime) + " millis.");
-  //TODO: Save Puff Time
+  if(digitalRead(FIREBUTTON) && vape_state) {vape_state = false; vape.stop();}
 }
