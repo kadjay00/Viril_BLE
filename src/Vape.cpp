@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Puff.cpp>
 class Vape
 {
   int mosfetPin;
@@ -8,6 +9,8 @@ class Vape
   int minSetPower;
   int maxSetPower;
   float coilResistance;
+
+  Puff puff;
 
   void calcPwmDc()
   {
@@ -27,8 +30,16 @@ public:
     pinMode(this->mosfetPin, OUTPUT);
     Serial.println("Mosfet setup complete.");
   }
+  void start()
+  {
+    Serial.println("Started vaping");
+    this->puff.start(50);
+    // TODO: Get time
+  }
+  void stop()
+  {
+    Serial.println("Stopped vaping");
+    this->puff.stop();
 
-
-
-
+  }
 };
