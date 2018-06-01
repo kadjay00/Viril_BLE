@@ -44,10 +44,23 @@ void setup()
 
   //Init BLE Device's name
   battery.setup(4, 5);
+  battery.setPercentage(40);
   vape.setup(MOSFET);
+  Battery* ptrBattery = &battery;
+  Ble ble;
+  ble.setup("Viril");
+  BleBattery bleBattery;
+  bleBattery.init(&battery, &ble);
+  Serial.println("Cpu Mhz: " + String(ESP.getCpuFreqMHz()));
+  Serial.println("Free Heap: " + String(ESP.getFreeHeap()));
+  Serial.println("Cpu Cycle count: " + String(ESP.getCycleCount()));
+  Serial.print("Temperature: ");
+  Serial.print((temprature_sens_read() - 32) / 1.8);
+  Serial.println(" C");
 }
 void loop()
 {
+
   //Serial.println(digitalRead(FIREBUTTON));
   lastButtonState = fireButton.clicks;
   fireButton.Update();
