@@ -4,11 +4,22 @@
 
 
 //#include <Adafruit_SSD1306.h>
-#include <Battery.cpp>
+#include <ble/BleBattery.cpp>
 #include <Vape.cpp>
+
+//#include <ble/BleBattery.cpp>
 
 #include <ClickButton.h>
 #include <Wire.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+uint8_t temprature_sens_read();
+#ifdef __cplusplus
+}
+#endif
+uint8_t temprature_sens_read();
 
 // define port numbers
 #define MOSFET 5
