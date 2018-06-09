@@ -1,34 +1,29 @@
 #include <Arduino.h>
+#include <Power.cpp>
 #include <Puff.cpp>
-class Vape
+class Mosfet
 {
-  int mosfetPin;
+  int pin;
   int pwm;
-  int setPower;
-  int maxPower;
-  int minSetPower;
-  int maxSetPower;
-  float coilResistance;
-
+  Power* pPower;
   Puff puff;
 
-  void calcPwmDc()
+  void calcPwm()
   {
-    //get battery voltage
-    //TODO: Does this work?
-    this->pwm = 255*this->setPower/this->maxPower;
-  }
-  void calcMaxPower(float voltage)
-  {
-
-    this->maxPower = sq(voltage)/this->coilResistance;
+    this->pwm = (this->pPower->getSetPower()/this->pPower->getMaxPower()) * 255;
   }
 public:
-  void setup(int mosfetPin)
+  void init(Power* pow)
   {
-    this->mosfetPin = mosfetPin;
-    pinMode(this->mosfetPin, OUTPUT);
-    Serial.println("Mosfet setup complete.");
+    this->pPower = pow;
+  }
+  void setup(int pin)
+  {
+    this->pin = pin;
+    //setup pinmode for mosfet pin
+    pinMode(this->pin, OUTPUT);
+    //set mosfet to low signal
+    digitalWrite(this->pin, LOW);
   }
   void start()
   {
@@ -40,6 +35,9 @@ public:
   {
     Serial.println("Stopped vaping");
     this->puff.stop();
-
+  }
+  void update()
+  {
+    this->calcPwm();
   }
 };
