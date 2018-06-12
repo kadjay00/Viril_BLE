@@ -1,43 +1,37 @@
-#include <Arduino.h>
-#include <Power.cpp>
-#include <Puff.cpp>
-class Mosfet
-{
-  int pin;
-  int pwm;
-  Power* pPower;
-  Puff puff;
+#include "Mosfet.h"
 
-  void calcPwm()
+  void Mosfet::calcPwm()
   {
     this->pwm = (this->pPower->getSetPower()/this->pPower->getMaxPower()) * 255;
   }
-public:
-  void init(Power* pow)
+  void Mosfet::init(Power* pow)
   {
     this->pPower = pow;
   }
-  void setup(int pin)
+  void Mosfet::setup(int pin)
   {
     this->pin = pin;
     //setup pinmode for mosfet pin
     pinMode(this->pin, OUTPUT);
     //set mosfet to low signal
     digitalWrite(this->pin, LOW);
+    //TODO: Setup pwm channel
   }
-  void start()
+  void Mosfet::start()
   {
     Serial.println("Started vaping");
     this->puff.start(50);
-    // TODO: Get time
+    //TODO: set pwm value
+
+    // TODO: Get time (in puff class?)
+
   }
-  void stop()
+  void Mosfet::stop()
   {
     Serial.println("Stopped vaping");
     this->puff.stop();
   }
-  void update()
+  void Mosfet::update()
   {
     this->calcPwm();
   }
-};
