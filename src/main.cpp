@@ -1,13 +1,11 @@
 #include <Arduino.h>
 #include <WiFi.h>
-#include <SimpleTimer.h>
 
-
-//#include <Adafruit_SSD1306.h>
-#include <ble/BleBattery.cpp>
-#include <Vape.cpp>
-
-//#include <ble/BleBattery.cpp>
+#include "Cell/Cell.h"
+#include "Battery/Battery.h"
+#include "Power/Power.h"
+#include "Mosfet/Mosfet.h"
+#include "Ble/Ble.h"
 
 #include <ClickButton.h>
 #include <Wire.h>
@@ -26,11 +24,6 @@ uint8_t temprature_sens_read();
 #define FIREBUTTON 4
 #define BATTERY 10
 #define POTMETER 12
-#define BATTERY_LOW 7.1
-
-//bool deviceConnected = false;
-
-
 
 bool vape_hold  = false;
 bool vape_state = false;
@@ -39,14 +32,20 @@ const int buttonPin1 = 4;
 ClickButton fireButton(FIREBUTTON, LOW, CLICKBTN_PULLUP);
 int lastButtonState;
 
+//declare battery cell pin array
+uint8_t cells[] = {1,2,null};
+
 Battery battery;
-Vape vape;
+Mosfet mosfet;
+Power power;
+Ble ble;
 
 
 void setup()
 {
   Serial.begin(9600);
   delay(1);
+
   // Setup button timers (all in milliseconds / ms)
   // (These are default if not set, but changeable for convenience)
   fireButton.debounceTime   = 20;   // Debounce timer in ms
@@ -54,24 +53,30 @@ void setup()
   fireButton.longClickTime  = 160; // time until "held-down clicks" register
 
   //Init BLE Device's name
-  battery.setup(4, 5);
+  battery.setup(cells, 5);
   battery.setPercentage(40);
-  vape.setup(MOSFET);
-  Battery* ptrBattery = &battery;
+  power.init(&battery);
+  mosfet.init(&power);
+  mosfet.setup(MOSFET);
+
   Ble ble;
   ble.setup("Viril");
-  BleBattery bleBattery;
-  bleBattery.init(&battery, &ble);
+
+  // BleBattery bleBattery;
+  // bleBattery.init(&battery, &ble);
+  // bleBattery.setup();
+  //
+
   Serial.println("Cpu Mhz: " + String(ESP.getCpuFreqMHz()));
   Serial.println("Free Heap: " + String(ESP.getFreeHeap()));
   Serial.println("Cpu Cycle count: " + String(ESP.getCycleCount()));
   Serial.print("Temperature: ");
   Serial.print((temprature_sens_read() - 32) / 1.8);
   Serial.println(" C");
+
 }
 void loop()
 {
-
   //Serial.println(digitalRead(FIREBUTTON));
   lastButtonState = fireButton.clicks;
   fireButton.Update();
@@ -79,8 +84,12 @@ void loop()
   if(fireButton.clicks == 5) true;//lock();
 
   // slow blink (must hold down button. 1 second long blinks)
-  if(fireButton.clicks == -1) {vape_state = true; vape.start();}
+  if(fireButton.clicks == -1)
+    {vape_state = true; mosfet.start();}
 
   //if(fireButton.clicks == 0 && !digitalRead(FIREBUTTON)) longPressCallback();
-  if(digitalRead(FIREBUTTON) && vape_state) {vape_state = false; vape.stop();}
+  if(digitalRead(FIREBUTTON) && vape_state)
+    {vape_state = false; mosfet.stop();}
+
+
 }
