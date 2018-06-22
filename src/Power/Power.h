@@ -11,6 +11,7 @@ public:
   void update();
   unsigned int getMaxPower();
   unsigned int getSetPower();
+  void setSetPower(int power);
 private:
    float coilResistance;
    unsigned int maxPower;

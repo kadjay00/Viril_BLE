@@ -24,3 +24,7 @@
      this->maxPower = sq(this->pBattery->getVoltage())/this->coilResistance;
 
    }
+   void Power::setSetPower(int power)
+   {
+     this->setPower = power;
+   }
