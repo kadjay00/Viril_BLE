@@ -8,7 +8,7 @@
     //Get analog voltage
     this->analogValue = analogRead(this->pin);
     //TODO: Convert analog voltage real voltage (pull down)
-    this->voltage = 4.0; //MOCKUP
+    this->voltage = 8.0; //MOCKUP
   }
   /**
    * Calculates the battery percentage using an interpolate function
@@ -36,12 +36,17 @@
    * @param pin       [The pin connected to the battery]
    * @param chargePin [the pin connected to the charge present pin]
    */
-  void Battery::setup(int pin, int chargePin)
+  void Battery::setup(uint8_t cellPins[], int chargePin)
   {
-    this->pin = pin;
     this->chargePin = chargePin;
-    pinMode(pin, INPUT);
     pinMode(chargePin, INPUT_PULLUP);
+    // TODO: Create Cell List
+    for( unsigned int i = 0; i < sizeof(cellPins); i = i + 1 )
+    {
+        Cell cell;
+        cell.setup(cellPins[i]);
+        this->cells.push_back(cell);
+    }
     Serial.println("Battery Setup Complete");
   }
   /**
@@ -69,6 +74,8 @@
     this->read();
     this->calcPercentage();
     this->checkCharge();
+
+
   }
 
 /*
