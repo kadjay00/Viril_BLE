@@ -3,16 +3,19 @@
 #include <Arduino.h>
 
 class Cell {
-private:
- byte pin;
+protected:
+ uint8_t pin;
+ uint16_t value;
  float voltage;
- byte percentage;
+ uint8_t percentage;
  void read();
 public:
 
-  void measure();
-  void setup(byte pin);
-  void setVoltage(float voltage);
+  float measurePin();
+  void  setup(uint8_t pin);
+  void  setVoltage(float voltage);
   float getVoltage();
+  void  calcPercentage();
+
 };
 #endif /* end of include guard: CELL_H */
