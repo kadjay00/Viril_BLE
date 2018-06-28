@@ -1,3 +1,6 @@
+#ifndef BLE_H
+#define BLE_H
+
 //BLE LIBRARIES
 #include <BLEDevice.h>
 #include <BLEServer.h>
@@ -21,3 +24,4 @@ public:
   void update();
   void finish();
 };
+#endif /* end of include guard: BLE_H */
