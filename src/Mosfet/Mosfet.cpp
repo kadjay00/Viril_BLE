@@ -6,9 +6,10 @@
   }
   void Mosfet::init(Power* pow)
   {
+
     this->pPower = pow;
   }
-  void Mosfet::setup(int pin)
+  void Mosfet::setup(uint8_t pin)
   {
     this->pin = pin;
     //setup pinmode for mosfet pin

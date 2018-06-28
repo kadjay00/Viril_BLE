@@ -31,12 +31,13 @@
    * @param pin       [The pin connected to the battery]
    * @param chargePin [the pin connected to the charge present pin]
    */
-  void Battery::setup(std::vector<Cell*> cells, int chargePin)
+  void Battery::setup(std::vector<Cell*> cells, uint8_t chargePin)
   {
     this->chargePin = chargePin;
     pinMode(chargePin, INPUT_PULLUP);
     this->cells = cells;
     Serial.println("Battery Setup Complete");
+    this->test = "3.7V";
   }
   /**
    * Updates the battery state

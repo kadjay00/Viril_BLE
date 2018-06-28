@@ -28,11 +28,12 @@ class Battery
 
 public:
 
-  void setup(std::vector<Cell*> cells, int chargePin);
+  void setup(std::vector<Cell*> cells, uint8_t chargePin);
   float getVoltage();
   uint8_t getPercentage();
   void setPercentage(uint8_t percentage);
   void update();
+  std::string test;
 };
 
 #endif /* end of include guard: BATTERY_H */

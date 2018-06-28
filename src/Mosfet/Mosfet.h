@@ -6,15 +6,15 @@
 class Mosfet
 {
 private:
-  int pin;
-  int pwm;
+  uint8_t pin;
+  uint8_t pwm;
   Power* pPower;
   Puff puff;
 
   void calcPwm();
 public:
   void init(Power* pow);
-  void setup(int pin);
+  void setup(uint8_t pin);
   void start();
   void stop();
   void update();
