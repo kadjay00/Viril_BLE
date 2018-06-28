@@ -1,11 +1,20 @@
 #include <Arduino.h>
 #include <WiFi.h>
-
+#include <vector>
 #include "Cell/Cell.h"
+#include "Cell/CellVD.h"
+#include "Cell/CellVcc.h"
+#include <FS.h>
+#include <SPIFFS.h>
+
+
 #include "Battery/Battery.h"
 #include "Power/Power.h"
 #include "Mosfet/Mosfet.h"
+#include <Ticker.h>
+
 #include "Ble/Ble.h"
+#include "BleBattery/BleBattery.h"
 
 #include <ClickButton.h>
 #include <Wire.h>
